@@ -3,19 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pengumuman Hasil Babak Semifinal KSNR SD 2026</title>
+<title>Pengumuman Hasil IKSC 2026 – International Kangaroo Science Contest</title>
 
 <!-- Primary Meta Tags -->
-<meta name="title" content="Pengumuman Hasil KSNR SD 2026 - Cek Hasil Online">
-<meta name="description" content="Cek hasil pengumuman Kompetisi Sains Nalaria Realistik (KSNR) SD 2026 secara online. Masukkan nama peserta atau nama sekolah untuk melihat status kelolosan.">
-<meta name="keywords" content="KSNR 2026, hasil KSNR, pengumuman KSNR, KSNR SD, Kompetisi Sains Nalaria Realistik, KPM, lomba sains SD, cek hasil KSNR">
-<meta name="author" content="Panitia KSNR 2026 - Klinik Pendidikan MIPA">
+<meta name="title" content="Pengumuman Hasil IKSC 2026 - Cek Hasil Online">
+<meta name="description" content="Cek hasil pengumuman International Kangaroo Science Contest (IKSC) 2026 dari Klinik Pendidikan MIPA (KPM) secara online. Masukkan nama peserta, sekolah, atau wilayah untuk melihat hasil.">
+<meta name="keywords" content="IKSC 2026, hasil IKSC, pengumuman IKSC, International Kangaroo Science Contest, Kangaroo Science, KPM, Klinik Pendidikan MIPA, lomba sains, cek hasil IKSC">
+<meta name="author" content="Panitia IKSC 2026 - Klinik Pendidikan MIPA">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="language" content="Indonesian">
 <meta name="geo.region" content="ID">
 <meta name="geo.placename" content="Indonesia">
+<meta name="theme-color" content="#083161">
 
-<link rel="preload" as="image" href="logo-ksnr8.png">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="id_ID">
+<meta property="og:title" content="Pengumuman Hasil IKSC 2026 - Cek Hasil Online">
+<meta property="og:description" content="Cek hasil International Kangaroo Science Contest (IKSC) 2026 dari Klinik Pendidikan MIPA (KPM).">
+
+<link rel="icon" type="image/png" href="logo-iksc.png">
+<link rel="preload" as="image" href="logo-iksc.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -88,7 +96,7 @@
   .brand-text .eyebrow {font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--blue-600); margin:0 0 4px;}
   .brand-text .name {font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:16.5px; color:var(--blue-950); line-height:1.15; margin:0;}
   nav.top-nav {display:flex; gap:6px;}
-  nav.top-nav a {font-size:14.5px; font-weight:600; color:var(--ink-soft); text-decoration:none; padding:9px 14px; border-radius:100px; transition:background .15s ease, color .15s ease;}
+  nav.top-nav a {white-space:nowrap; font-size:14.5px; font-weight:600; color:var(--ink-soft); text-decoration:none; padding:9px 14px; border-radius:100px; transition:background .15s ease, color .15s ease;}
   nav.top-nav a:hover {background:var(--blue-50); color:var(--blue-800);}
   nav.top-nav a.active {background:var(--blue-800); color:var(--white);}
 
@@ -239,7 +247,7 @@
   .seal .seal-icon{width:26px;height:26px;border-radius:50%; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center;}
   .seal .seal-label{color:var(--white); font-weight:800; font-size:13.5px; letter-spacing:.03em;}
 
-  /* ===== Modal Pop-up KSNR ===== */
+  /* ===== Modal Pop-up IKSC ===== */
   .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(5, 34, 64, 0.45);
@@ -294,22 +302,46 @@
   .info-card ol li::marker{color:var(--blue-600); font-weight:700;}
 
   /* ===== Timeline section ===== */
-  .timeline-section{max-width:1120px; margin:56px auto 0; padding:0 24px;}
+  .timeline-section{max-width:1120px; margin:64px auto 0; padding:0 24px;}
   .timeline-card{
     background:var(--blue-900);
     background-image:radial-gradient(circle at 10% 0%, rgba(59,138,224,.35), transparent 50%);
-    border-radius:var(--radius-lg); padding:34px 36px; display:grid;
-    grid-template-columns:repeat(5,1fr); gap:20px; position:relative; overflow:hidden;
+    border-radius:var(--radius-lg); padding:38px 42px 40px; display:grid;
+    grid-template-columns:repeat(2,1fr); gap:32px; position:relative; overflow:hidden;
+    box-shadow:var(--shadow-card);
   }
   .timeline-card::after{
     content:""; position:absolute; right:-60px; bottom:-90px; width:260px;height:260px;
-    border-radius:50%; border:38px solid rgba(255,255,255,.045);
+    border-radius:50%; border:38px solid rgba(255,255,255,.045); pointer-events:none;
   }
   .tl-item{position:relative; z-index:1;}
-  .tl-item .tl-index{font-size:12px; font-weight:800; color:var(--blue-200); letter-spacing:.08em; margin:0 0 10px;}
-  .tl-item .tl-date{color:var(--white); font-weight:800; font-size:15px; margin:0 0 4px;}
-  .tl-item .tl-desc{color:var(--blue-200); font-size:12.5px; line-height:1.55; margin:0;}
-  .tl-item:not(:last-child){border-right:1px solid rgba(255,255,255,.1); padding-right:18px;}
+
+  /* Jalur penghubung antar tahap */
+  .tl-track{display:flex; align-items:center; gap:14px; margin-bottom:22px;}
+  .tl-dot{
+    width:16px; height:16px; border-radius:50%; flex-shrink:0; box-sizing:border-box;
+    border:2.5px solid var(--blue-500); background:var(--blue-900);
+  }
+  .tl-line{flex:1; height:2px; border-radius:2px; background:repeating-linear-gradient(90deg, rgba(187,218,247,.5) 0 8px, transparent 8px 14px);}
+  .tl-item:first-child .tl-line{margin-right:-32px;}
+  .tl-item:last-child .tl-line{display:none;}
+
+  .tl-item .tl-index{font-size:12px; font-weight:800; color:var(--blue-200); letter-spacing:.08em; margin:0 0 8px;}
+  .tl-item .tl-title{font-family:'Plus Jakarta Sans',sans-serif; color:var(--white); font-weight:800; font-size:21px; line-height:1.25; margin:0 0 6px; letter-spacing:-0.01em;}
+  .tl-item .tl-date{color:var(--blue-200); font-weight:600; font-size:15px; margin:0 0 16px;}
+  .tl-chip{
+    display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:700; padding:5px 12px 5px 10px; border-radius:100px;
+    background:rgba(255,255,255,.1); color:var(--blue-100); border:1px solid rgba(255,255,255,.12);
+  }
+  .tl-chip::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--blue-500);}
+
+  /* Status tahap (diatur otomatis oleh JS berdasarkan tanggal WIB) */
+  .tl-item.is-done .tl-dot{background:var(--blue-500); border-color:var(--blue-500);}
+  .tl-item.is-done .tl-chip::before{background:var(--blue-200);}
+  .tl-item.is-today .tl-dot{background:#22C55E; border-color:#22C55E; box-shadow:0 0 0 5px rgba(34,197,94,.22);}
+  .tl-item.is-today .tl-chip{background:rgba(34,197,94,.16); color:#BDF3CE; border-color:rgba(34,197,94,.4);}
+  .tl-item.is-today .tl-chip::before{background:#22C55E; box-shadow:0 0 0 3px rgba(34,197,94,.25);}
+  .tl-item.is-today .tl-date{color:var(--white);}
 
   /* ===== Footer ===== */
   footer{
@@ -338,8 +370,10 @@
     .hero-art{order:-1; max-width:220px; margin:0 auto;}
     form.lookup-form{grid-template-columns:1fr;}
     .info-grid{grid-template-columns:1fr;}
-    .timeline-card{grid-template-columns:1fr 1fr;}
-    .tl-item:not(:last-child){border-right:none; padding-right:0;}
+    .timeline-card{grid-template-columns:1fr; gap:26px; padding:30px 26px 32px;}
+    .tl-item:first-child .tl-line{display:none;}
+    .tl-item:not(:last-child){padding-bottom:26px; border-bottom:1px solid rgba(255,255,255,.1);}
+    .tl-track{margin-bottom:16px;}
     .footer-top{flex-direction:column;}
   }
 </style>
@@ -352,7 +386,7 @@
         <img src="logo-kpm.png" alt="Logo Klinik Pendidikan MIPA" class="brand-logo">
         <div class="brand-text">
           <p class="eyebrow">Klinik Pendidikan MIPA</p>
-          <p class="name">Kompetisi Sains Nalaria&nbsp;Realistik</p>
+          <p class="name">International Kangaroo Science&nbsp;Contest</p>
         </div>
       </div>
       <nav class="top-nav">
@@ -368,9 +402,9 @@
   <section class="hero" id="beranda">
     <div class="hero-grid">
       <div>
-        <div class="status-pill" id="heroStatusPill"><span class="dot"></span> <span id="heroStatusText">TELAH DITUTUP</span></div>
-        <h1>Hasil <span>Kompetisi Sains Nalaria Realistik</span> (KSNR) Tahun 2026</h1>
-        <p class="lead">Selamat kepada seluruh peserta yang telah mengikuti rangkaian seleksi dengan penuh semangat. Kompetisi dari Klinik Pendidikan MIPA (KPM) ini menguji kemampuan bernalar sains secara realistis. Cari hasil kamu dengan nama peserta, sekolah, atau wilayah di bawah ini.</p>
+        <div class="status-pill" id="heroStatusPill"><span class="dot"></span> <span id="heroStatusText">MENUNGGU PENGUMUMAN HASIL</span></div>
+        <h1>Hasil <span>International Kangaroo Science Contest</span> (IKSC) Tahun 2026</h1>
+        <p class="lead">Terima kasih kepada seluruh peserta yang telah mengikuti IKSC dengan penuh semangat. Kompetisi sains internasional dari Klinik Pendidikan MIPA (KPM) ini mengajak peserta menjelajahi dan menerapkan sains dalam kehidupan sehari-hari. Cari hasil kamu dengan nama peserta, sekolah, atau wilayah di bawah ini.</p>
         <div class="hero-meta">
           <div class="item">
             <div class="icon-box">
@@ -385,7 +419,7 @@
           <circle cx="140" cy="140" r="132" fill="#E1EFFC"/>
           <circle cx="140" cy="140" r="98" fill="#F3F8FE" stroke="#BBDAF7" stroke-width="1.5" stroke-dasharray="3 7"/>
         </svg>
-        <img src="logo-ksnr8.png" alt="Logo KSNR 8" class="hero-logo">
+        <img src="logo-iksc.png" alt="Logo IKSC" class="hero-logo">
       </div>
     </div>
   </section>
@@ -408,7 +442,7 @@
         </div>
         <div>
           <p class="locked-title">Pencarian belum dapat digunakan</p>
-          <p class="locked-desc"><strong>WEBSITE PENCARIAN HASIL PENGUMUMAN KSNR RESMI DITUTUP.</strong> Untuk yang lolos ke babak final, semoga bisa membawa pulang kemenangan!</p>
+          <p class="locked-desc"><strong>HASIL IKSC 2026 DIUMUMKAN PADA JUMAT, 4 DESEMBER 2026.</strong> Fitur pencarian akan dibuka setelah hasil resmi dirilis oleh panitia. Pantau terus laman ini.</p>
         </div>
       </div>
 
@@ -489,31 +523,24 @@
   </section>
 
   <section class="timeline-section" id="jadwal">
+    <div class="section-head">
+      <p class="eyebrow">Tahapan</p>
+      <h2>Jadwal IKSC 2026</h2>
+    </div>
     <div class="timeline-card">
-      <div class="tl-item">
+      <div class="tl-item" data-date="2026-10-30">
+        <div class="tl-track" aria-hidden="true"><span class="tl-dot"></span><span class="tl-line"></span></div>
         <p class="tl-index">TAHAP 01</p>
-        <p class="tl-date">23 Agu 2026</p>
-        <p class="tl-desc">Babak penyisihan KSNR</p>
+        <h3 class="tl-title">Pelaksanaan Tes</h3>
+        <p class="tl-date"><time datetime="2026-10-30">Jumat, 30 Oktober 2026</time></p>
+        <span class="tl-chip" data-label>Terjadwal</span>
       </div>
-      <div class="tl-item">
+      <div class="tl-item" data-date="2026-12-04">
+        <div class="tl-track" aria-hidden="true"><span class="tl-dot"></span><span class="tl-line"></span></div>
         <p class="tl-index">TAHAP 02</p>
-        <p class="tl-date">11 Sept 2026</p>
-        <p class="tl-desc">Pengumuman hasil babak penyisihan</p>
-      </div>
-      <div class="tl-item">
-        <p class="tl-index">TAHAP 03</p>
-        <p class="tl-date">20 Sept 2026</p>
-        <p class="tl-desc">Babak semifinal KSNR</p>
-      </div>
-      <div class="tl-item">
-        <p class="tl-index">TAHAP 04</p>
-        <p class="tl-date">1 Okt 2026</p>
-        <p class="tl-desc">Pengumuman hasil babak semifinal</p>
-      </div>
-      <div class="tl-item">
-        <p class="tl-index">TAHAP 05</p>
-        <p class="tl-date">18 Okt 2026</p>
-        <p class="tl-desc">Babak final KSNR</p>
+        <h3 class="tl-title">Pengumuman Hasil IKSC</h3>
+        <p class="tl-date"><time datetime="2026-12-04">Jumat, 4 Desember 2026</time></p>
+        <span class="tl-chip" data-label>Terjadwal</span>
       </div>
     </div>
   </section>
@@ -524,8 +551,8 @@
         <div class="footer-brand">
           <img src="logo-kpm.png" alt="Logo Klinik Pendidikan MIPA" style="height:46px; width:auto; flex-shrink:0;">
           <div>
-            <p class="name">Panitia KSNR 2026</p>
-            <p>Laman resmi pengumuman hasil Kompetisi Sains Nalaria Realistik oleh Klinik Pendidikan MIPA (KPM).</p>
+            <p class="name">Panitia IKSC 2026</p>
+            <p>Laman resmi pengumuman hasil International Kangaroo Science Contest (IKSC) oleh Klinik Pendidikan MIPA (KPM).</p>
           </div>
         </div>
         <div class="footer-contact">
@@ -537,13 +564,13 @@
           <div>
             <h4>Tautan</h4>
             <a href="#cek-hasil">Cek Hasil</a>
-            <a href="#jadwal">Jadwal Lengkap</a>
+            <a href="#jadwal">Jadwal</a>
             <a href="#info">Panduan</a>
           </div>
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2026 Panitia KSNR — Klinik Pendidikan MIPA. Seluruh hak dilindungi.</span>
+        <span>© 2026 Panitia IKSC — Klinik Pendidikan MIPA. Seluruh hak dilindungi.</span>
         <span>Dokumen ini bersifat resmi dan diterbitkan oleh panitia pusat.</span>
       </div>
     </div>
@@ -556,7 +583,7 @@
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <h3 class="modal-title">Pengumuman Telah Tiba!</h3>
-      <p class="modal-desc">Sistem telah diperbarui. Kamu sekarang dapat melihat hasil seleksi babak semifinal KSNR SD 2026 secara resmi. Semoga mendapat hasil yang terbaik!</p>
+      <p class="modal-desc">Sistem telah diperbarui. Kamu sekarang dapat melihat hasil resmi IKSC 2026. Semoga mendapat hasil yang terbaik!</p>
       <button type="button" class="modal-btn" onclick="closeModal()">Cari Hasil Sekarang</button>
     </div>
   </div>
@@ -564,6 +591,8 @@
 <script>
   // ===== KONFIGURASI API BACKEND =====
   const API_URL = '/api/cari';
+  // CATATAN: nilai kunci ini harus sama dengan kunci uji coba di backend (/api/cari).
+  // Jika kunci di backend diganti, ubah juga nilai di bawah ini.
   const DEFAULT_TEST_KEY = 'panitiaksnr2026';
   let currentMode = 'nama';
 
@@ -605,14 +634,14 @@
     const urlParams = new URLSearchParams(window.location.search);
     const queryKey = urlParams.get('test_key');
     if (queryKey) {
-      sessionStorage.setItem('ksnr_test_key', queryKey);
+      sessionStorage.setItem('iksc_test_key', queryKey);
       return queryKey;
     }
     if (window.location.hash === '#tes-pencarian-hasil') {
-      sessionStorage.setItem('ksnr_test_key', DEFAULT_TEST_KEY);
+      sessionStorage.setItem('iksc_test_key', DEFAULT_TEST_KEY);
       return DEFAULT_TEST_KEY;
     }
-    return sessionStorage.getItem('ksnr_test_key') || '';
+    return sessionStorage.getItem('iksc_test_key') || '';
   }
 
   // FUNGSI MODAL
@@ -659,7 +688,7 @@
           const modalDesc = document.querySelector('.modal-desc');
           if (data.is_test_mode && modalTitle && modalDesc) {
             modalTitle.textContent = 'Mode Pengujian Panitia';
-            modalDesc.textContent = 'Fitur pencarian hasil babak semifinal KSNR SD 2026 dibuka khusus untuk pengujian panitia.';
+            modalDesc.textContent = 'Fitur pencarian hasil IKSC 2026 dibuka khusus untuk pengujian panitia.';
           }
           setTimeout(showModal, 300);
           sessionStorage.setItem('pengumumanModalSeen', 'true');
@@ -871,6 +900,29 @@
   window.addEventListener('scroll', () => { 
     window.scrollY > 20 ? headerEl.classList.add('is-scrolled') : headerEl.classList.remove('is-scrolled'); 
   });
+
+  // ===== STATUS JADWAL (otomatis, zona waktu WIB) =====
+  function updateTimeline() {
+    const todayWIB = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' }); // YYYY-MM-DD
+    const toDays = (iso) => Date.UTC(...iso.split('-').map((v, i) => i === 1 ? Number(v) - 1 : Number(v))) / 86400000;
+    const today = toDays(todayWIB);
+
+    document.querySelectorAll('.tl-item[data-date]').forEach(item => {
+      const diff = Math.round(toDays(item.dataset.date) - today);
+      const chip = item.querySelector('[data-label]');
+      item.classList.remove('is-done', 'is-today');
+      if (diff < 0) {
+        item.classList.add('is-done');
+        chip.textContent = 'Selesai';
+      } else if (diff === 0) {
+        item.classList.add('is-today');
+        chip.textContent = 'Hari ini';
+      } else {
+        chip.textContent = diff === 1 ? 'Besok' : `${diff} hari lagi`;
+      }
+    });
+  }
+  updateTimeline();
 
   // Init Status
   checkServerStatus();
