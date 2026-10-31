@@ -23,6 +23,7 @@
 <meta property="og:description" content="Cek hasil International Kangaroo Science Contest (IKSC) 2026 dari Klinik Pendidikan MIPA (KPM).">
 
 <link rel="icon" type="image/png" href="logo-iksc.png">
+<link rel="preload" as="image" href="banner-iksc.png" fetchpriority="high">
 <link rel="preload" as="image" href="logo-iksc.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -111,6 +112,40 @@
     border-radius: 100px; padding: 8px 24px; max-width: 1040px;
   }
   header.is-scrolled .brand-logo {height: 42px;}
+
+  /* ===== Banner (bawah memudar dengan blur halus) ===== */
+  .banner{max-width:1120px; margin:22px auto 0; padding:0 24px; position:relative; z-index:1;}
+  .banner-frame{
+    position:relative; height:clamp(170px, 31vw, 360px); overflow:hidden;
+    border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+    animation:bannerIn .8s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .banner-frame img{
+    width:100%; height:100%; object-fit:cover; object-position:center 52%;
+    -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 58%, rgba(0,0,0,.55) 78%, transparent 100%);
+            mask-image:linear-gradient(to bottom, #000 0%, #000 58%, rgba(0,0,0,.55) 78%, transparent 100%);
+  }
+  /* Blur progresif: makin ke bawah makin kabur, tanpa garis batas yang tajam */
+  .banner-blur{position:absolute; left:0; right:0; bottom:0; height:52%; pointer-events:none;}
+  .banner-blur i{position:absolute; inset:0;}
+  .banner-blur i:nth-child(1){
+    -webkit-backdrop-filter:blur(1.5px); backdrop-filter:blur(1.5px);
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0%, #000 25%, #000 50%, transparent 75%);
+            mask-image:linear-gradient(to bottom, transparent 0%, #000 25%, #000 50%, transparent 75%);
+  }
+  .banner-blur i:nth-child(2){
+    -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px);
+    -webkit-mask-image:linear-gradient(to bottom, transparent 25%, #000 50%, #000 75%, transparent 100%);
+            mask-image:linear-gradient(to bottom, transparent 25%, #000 50%, #000 75%, transparent 100%);
+  }
+  .banner-blur i:nth-child(3){
+    -webkit-backdrop-filter:blur(9px); backdrop-filter:blur(9px);
+    -webkit-mask-image:linear-gradient(to bottom, transparent 50%, #000 75%, #000 100%);
+            mask-image:linear-gradient(to bottom, transparent 50%, #000 75%, #000 100%);
+  }
+  @keyframes bannerIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+  @media (prefers-reduced-motion:reduce){ .banner-frame{animation:none;} }
+  .banner + .hero{padding-top:26px;}
 
   /* ===== Hero ===== */
   .hero{max-width:1120px; margin:0 auto; padding:56px 24px 20px; position:relative; z-index:1;}
@@ -398,6 +433,14 @@
       </nav>
     </div>
   </header>
+
+  <div class="banner">
+    <div class="banner-frame">
+      <img src="banner-iksc.png" alt="Banner IKSC ke-19 Tahun 2026" fetchpriority="high" decoding="async"
+           onerror="this.closest('.banner').style.display='none'">
+      <div class="banner-blur" aria-hidden="true"><i></i><i></i><i></i></div>
+    </div>
+  </div>
 
   <section class="hero" id="beranda">
     <div class="hero-grid">
