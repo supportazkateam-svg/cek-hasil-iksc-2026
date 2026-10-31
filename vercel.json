@@ -7,47 +7,6 @@
       "maxDuration": 10
     }
   },
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store, max-age=0" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
-      ]
-    },
-    {
-      "source": "/(.*)\\.(png|jpg|jpeg|svg|webp|ico)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=604800, immutable" }
-      ]
-    },
-    {
-      "source": "/(.*)\\.(js|css)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=604800, immutable" }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" }
-      ]
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/hasil",
-      "destination": "/#cek-hasil",
-      "permanent": false
-    },
-    {
-      "source": "/cek",
-      "destination": "/#cek-hasil",
-      "permanent": false
-    }
-  ],
   "rewrites": [
     {
       "source": "/api/cari",

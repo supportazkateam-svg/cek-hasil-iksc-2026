@@ -47,11 +47,33 @@ function isTesting(req) {
   return secureEqual(suppliedKey, process.env.TEST_KEY);
 }
 
-function readJson(filePath) {
+function toRecords(parsed) {
+  const records = Array.isArray(parsed) ? parsed : parsed.data;
+  return Array.isArray(records) ? records : [];
+}
+
+function readJson(fileName) {
   try {
-    const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    const records = Array.isArray(parsed) ? parsed : parsed.data;
-    return Array.isArray(records) ? records : [];
+    // Keep these paths literal. Vercel's Node File Trace can then include both
+    // JSON files in the serverless bundle instead of treating them as dynamic I/O.
+    if (fileName === 'peserta-kelas5.json') return toRecords(require('../data/peserta-kelas5.json'));
+    if (fileName === 'peserta-kelas6.json') return toRecords(require('../data/peserta-kelas6.json'));
+    throw new Error(`Nama berkas data tidak diizinkan: ${fileName}`);
+  } catch (error) {
+    // Retain a filesystem fallback for local runners and unusual Vercel layouts.
+    try {
+      const filePath = path.join(__dirname, '..', 'data', fileName);
+      return toRecords(JSON.parse(fs.readFileSync(filePath, 'utf8')));
+    } catch (fallbackError) {
+      console.error(`[Data Error] ${fileName}: ${error.message} | Fallback: ${fallbackError.message}`);
+      return [];
+    }
+  }
+}
+
+function readJsonFile(filePath) {
+  try {
+    return toRecords(JSON.parse(fs.readFileSync(filePath, 'utf8')));
   } catch (error) {
     console.error(`[Data Error] ${path.basename(filePath)}: ${error.message}`);
     return [];
@@ -63,16 +85,16 @@ function loadPesertaData() {
 
   const root = path.join(__dirname, '..');
   const ikscRecords = [
-    path.join(root, 'data', 'peserta-kelas5.json'),
-    path.join(root, 'data', 'peserta-kelas6.json')
-  ].flatMap(readJson);
+    ...readJson('peserta-kelas5.json'),
+    ...readJson('peserta-kelas6.json')
+  ];
 
   // A legacy KSNR file exists in this repository, but it must never be presented
   // as IKSC results. It can be enabled explicitly for local migration checks only.
   cachedData = ikscRecords.length > 0
     ? ikscRecords
     : (process.env.ALLOW_LEGACY_DATA === 'true'
-      ? readJson(path.join(root, 'api', 'peserta.json'))
+      ? readJsonFile(path.join(root, 'api', 'peserta.json'))
       : []);
   return cachedData;
 }
