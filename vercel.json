@@ -1,19 +1,10 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "framework": null,
-  "buildCommand": null,
-  "installCommand": "npm install",
-  "outputDirectory": null,
-  "public": false,
   "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
     "api/cari.js": {
-      "runtime": "nodejs20.x",
-      "memory": 1024,
-      "maxDuration": 10,
-      "regions": ["sin1"]
+      "maxDuration": 10
     }
   },
   "headers": [
