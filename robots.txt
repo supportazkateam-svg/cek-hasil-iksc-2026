@@ -1,6 +1,10 @@
-User-agent: *
-Allow: /
-Disallow: /api/
-Disallow: /admin/
+# robots.txt untuk https://www.cekhasiliksc.my.id
+# Pengumuman Hasil IKSC 2026 (International Kangaroo Science Contest) - KPM
 
-Sitemap: https://cek-hasil-babak-penyisihan-ksnr-2026.vercel.app/sitemap.xml
+User-agent: *
+# Endpoint pencarian data peserta (bukan konten untuk diindeks)
+Disallow: /api/
+# Halaman, CSS, JS, dan gambar boleh dirayapi agar Google dapat merender situs dengan benar
+Allow: /
+
+Sitemap: https://www.cekhasiliksc.my.id/sitemap.xml
