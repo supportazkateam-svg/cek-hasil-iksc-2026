@@ -7,7 +7,7 @@
 
 <!-- Primary Meta Tags -->
 <meta name="title" content="Pengumuman Hasil IKSC 2026 - Cek Hasil Online">
-<meta name="description" content="Cek hasil pengumuman International Kangaroo Science Contest (IKSC) 2026 dari Klinik Pendidikan MIPA (KPM) secara online. Masukkan nama peserta, sekolah, atau wilayah untuk melihat hasil.">
+<meta name="description" content="Cek hasil pengumuman International Kangaroo Science Contest (IKSC) 2026 dari Klinik Pendidikan MIPA (KPM) secara online. Masukkan nama, sekolah, atau ID peserta untuk melihat hasil.">
 <meta name="keywords" content="IKSC 2026, hasil IKSC, pengumuman IKSC, International Kangaroo Science Contest, Kangaroo Science, KPM, Klinik Pendidikan MIPA, lomba sains, cek hasil IKSC">
 <meta name="author" content="Panitia IKSC 2026 - Klinik Pendidikan MIPA">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -272,7 +272,7 @@
   }
   .mode-switch[data-mode="nama"] .mode-thumb{transform:translateX(0);}
   .mode-switch[data-mode="sekolah"] .mode-thumb{transform:translateX(calc(100% + 4px));}
-  .mode-switch[data-mode="wilayah"] .mode-thumb{transform:translateX(calc(200% + 8px));}
+  .mode-switch[data-mode="id"] .mode-thumb{transform:translateX(calc(200% + 8px));}
   
   .mode-switch button.mode-opt{
     position:relative; z-index:1; display:flex; align-items:center; justify-content:center; gap:7px;
@@ -319,6 +319,23 @@
   .result-card-container{display:none; padding:0; overflow:visible; animation:reveal .5s cubic-bezier(.2,.8,.2,1);}
   .result-card-container.show{display:block;}
   @keyframes reveal{from{opacity:0; transform:translateY(14px) scale(.985);} to{opacity:1; transform:translateY(0) scale(1);}}
+
+  .result-celebration{padding:38px 24px 30px; border-radius:var(--radius-lg); text-align:center; overflow:hidden; border:1px solid rgba(255,255,255,.7); margin-bottom:24px; animation:reveal .5s cubic-bezier(.2,.8,.2,1);}
+  .medal-mark{width:86px; height:86px; margin:0 auto 16px; display:grid; place-items:center; border-radius:50%; font-size:43px; background:rgba(255,255,255,.72); box-shadow:0 12px 24px rgba(15,23,42,.12);}
+  .celebration-headline{margin:0 0 7px; color:rgba(15,23,42,.75); font-size:15px; font-weight:700;}
+  .celebration-highlight{margin:0 0 6px; font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(24px,5vw,32px); line-height:1.15; font-weight:800;}
+  .celebration-sub{margin:0 0 22px; color:rgba(15,23,42,.75); font-weight:600;}
+  .result-identity{display:flex; align-items:center; gap:13px; max-width:500px; margin:0 auto 18px; padding:14px 16px; text-align:left; border:1px solid rgba(255,255,255,.9); border-radius:var(--radius-md); background:rgba(255,255,255,.72);}
+  .result-avatar{width:46px; height:46px; display:grid; place-items:center; flex:0 0 auto; border-radius:50%; color:#fff; font-weight:800;}
+  .result-identity p{margin:0;}
+  .result-name{font-weight:800; color:#0F172A;}
+  .result-meta,.result-id{font-size:12px; color:#475569; margin-top:3px !important;}
+  .result-id{font-family:monospace;}
+  .result-quote{max-width:500px; margin:0 auto 22px; padding:14px 17px; border-radius:14px; background:rgba(255,255,255,.58); color:#1E293B; font-size:14px; line-height:1.5; font-style:italic;}
+  .result-actions{display:flex; justify-content:center; gap:10px; flex-wrap:wrap;}
+  .btn-share,.btn-search-again{padding:12px 18px; border:0; border-radius:100px; font:700 14px 'Inter',sans-serif; cursor:pointer; text-decoration:none;}
+  .btn-share{background:#25D366; color:#fff;}
+  .btn-search-again{background:rgba(255,255,255,.9); color:#0F172A;}
   
   .result-top{
     background:var(--blue-950); background-image:radial-gradient(circle at 85% -20%, rgba(59,138,224,.35), transparent 55%);
@@ -503,7 +520,7 @@
       <div>
         <div class="status-pill" id="heroStatusPill"><span class="dot"></span> <span id="heroStatusText">MENUNGGU PENGUMUMAN HASIL</span></div>
         <h1>Hasil <span>International Kangaroo Science Contest</span> (IKSC) Tahun 2026</h1>
-        <p class="lead">Terima kasih kepada seluruh peserta yang telah mengikuti IKSC dengan penuh semangat. Kompetisi sains internasional dari Klinik Pendidikan MIPA (KPM) ini mengajak peserta menjelajahi dan menerapkan sains dalam kehidupan sehari-hari. Cari hasil kamu dengan nama peserta, sekolah, atau wilayah di bawah ini.</p>
+        <p class="lead">Terima kasih kepada seluruh peserta yang telah mengikuti IKSC dengan penuh semangat. Cari hasil dengan nama peserta, sekolah, atau ID peserta di bawah ini.</p>
         <div class="hero-meta">
           <div class="item">
             <div class="icon-box">
@@ -532,7 +549,7 @@
         </div>
         <div>
           <h2>Cari Hasil Peserta <span class="locked-tag" id="statusTag">Memeriksa Server...</span></h2>
-          <p>Pilih mode pencarian: cari berdasarkan nama peserta, sekolah, atau wilayah asal. Gunakan filter status jika diperlukan.</p>
+          <p>Cari berdasarkan nama, sekolah, atau ID peserta. Filter medali tersedia saat mencari sekolah.</p>
         </div>
       </div>
 
@@ -550,7 +567,7 @@
         <div class="mode-thumb"></div>
         <button type="button" class="mode-opt is-active" id="modeNama" data-mode="nama" disabled>Peserta</button>
         <button type="button" class="mode-opt" id="modeSekolah" data-mode="sekolah" disabled>Sekolah</button>
-        <button type="button" class="mode-opt" id="modeWilayah" data-mode="wilayah" disabled>Wilayah</button>
+        <button type="button" class="mode-opt" id="modeId" data-mode="id" disabled>ID Peserta</button>
       </div>
 
       <form class="lookup-form is-locked" id="lookupForm">
@@ -561,13 +578,16 @@
           <span class="field-hint" id="searchHint">Sesuai nama yang terdaftar</span>
         </div>
         
-        <!-- Field Filter Kelolosan -->
+        <!-- Field Filter Medali -->
         <div class="field filter-container" id="statusFilterContainer" style="display:none; grid-column:span 1;">
-          <label for="statusFilter">Status Kelolosan</label>
+          <label for="statusFilter">Filter Hasil</label>
           <select id="statusFilter" disabled>
-            <option value="semua">Semua Status</option>
-            <option value="lolos">Dinyatakan Lolos</option>
-            <option value="tidak_lolos">Belum Lolos</option>
+            <option value="semua">Semua Peserta</option>
+            <option value="medali">🏆 Semua Peraih Medali</option>
+            <option value="gold">🥇 Gold Medal</option>
+            <option value="silver">🥈 Silver Medal</option>
+            <option value="bronze">🥉 Bronze Medal</option>
+            <option value="participant">🎗️ Participant</option>
           </select>
         </div>
 
@@ -600,8 +620,8 @@
         </div>
         <h3>Cara Melihat Hasil</h3>
         <ol>
-          <li>Pilih mode pencarian (Peserta/Sekolah/Wilayah)</li>
-          <li>Gunakan filter kelolosan jika diperlukan</li>
+          <li>Pilih mode pencarian (Peserta/Sekolah/ID Peserta)</li>
+          <li>Gunakan filter medali jika diperlukan</li>
           <li>Ketik nama lalu tekan "Cari Hasil Sekarang"</li>
         </ol>
       </div>
@@ -610,7 +630,7 @@
           <svg width="42" height="42" viewBox="0 0 42 42" fill="none"><rect width="42" height="42" rx="12" fill="#E1EFFC"/><path d="M13 29V17l8-6 8 6v12" stroke="#0B4F9C" stroke-width="2" stroke-linejoin="round"/><path d="M17 29v-7h8v7" stroke="#0B4F9C" stroke-width="2"/></svg>
         </div>
         <h3>Jika Belum Ditemukan</h3>
-        <p>Periksa kembali ejaan nama, asal sekolah atau wilayah. Jika data tetap tidak ditemukan, hubungi panitia melalui kontak resmi di bagian bawah halaman.</p>
+          <p>Periksa kembali ejaan nama, sekolah, atau ID peserta. Jika data tetap tidak ditemukan, hubungi panitia melalui kontak resmi di bagian bawah halaman.</p>
       </div>
       <div class="info-card">
         <div class="icon-box">
@@ -691,9 +711,6 @@
 <script>
   // ===== KONFIGURASI API BACKEND =====
   const API_URL = '/api/cari';
-  // CATATAN: nilai kunci ini harus sama dengan kunci uji coba di backend (/api/cari).
-  // Jika kunci di backend diganti, ubah juga nilai di bawah ini.
-  const DEFAULT_TEST_KEY = 'panitiaksnr2026';
   let currentMode = 'nama';
 
   // Elemen DOM
@@ -703,7 +720,7 @@
   const modeSwitch = document.getElementById('modeSwitch');
   const modeNamaBtn = document.getElementById('modeNama');
   const modeSekolahBtn = document.getElementById('modeSekolah');
-  const modeWilayahBtn = document.getElementById('modeWilayah');
+  const modeIdBtn = document.getElementById('modeId');
   
   const searchInput = document.getElementById('searchInput');
   const searchLabel = document.getElementById('searchLabel');
@@ -720,9 +737,9 @@
   const modalOverlay = document.getElementById('announcementModal');
 
   const MODE_COPY = {
-    nama: { label: 'Nama Peserta', placeholder: 'Contoh: Ahmad Fauzan', hint: 'Minimal 2 karakter' },
+    nama: { label: 'Nama Peserta', placeholder: 'Contoh: Ahmad Fauzan', hint: 'Minimal 3 karakter' },
     sekolah: { label: 'Nama Sekolah', placeholder: 'Contoh: SDN 01 Pare', hint: 'Mencari peserta dari sekolah ini' },
-    wilayah: { label: 'Nama Wilayah', placeholder: 'Contoh: Balikpapan', hint: 'Mencari peserta dari wilayah ini' }
+    id: { label: 'ID Peserta', placeholder: 'Contoh: IKSC-000123', hint: 'Masukkan ID peserta secara lengkap' }
   };
 
   function escapeHtml(str){
@@ -735,11 +752,10 @@
     const queryKey = urlParams.get('test_key');
     if (queryKey) {
       sessionStorage.setItem('iksc_test_key', queryKey);
+      urlParams.delete('test_key');
+      const cleanedQuery = urlParams.toString();
+      history.replaceState(null, '', `${window.location.pathname}${cleanedQuery ? `?${cleanedQuery}` : ''}${window.location.hash}`);
       return queryKey;
-    }
-    if (window.location.hash === '#tes-pencarian-hasil') {
-      sessionStorage.setItem('iksc_test_key', DEFAULT_TEST_KEY);
-      return DEFAULT_TEST_KEY;
     }
     return sessionStorage.getItem('iksc_test_key') || '';
   }
@@ -759,9 +775,8 @@
   async function checkServerStatus() {
     try {
       const activeTestKey = getActiveTestKey();
-      const testParam = activeTestKey ? `&test_key=${encodeURIComponent(activeTestKey)}` : '';
-      
-      const res = await fetch(`${API_URL}?check_status=true${testParam}`);
+      const headers = activeTestKey ? { 'X-Test-Key': activeTestKey } : {};
+      const res = await fetch(`${API_URL}?check_status=true`, { headers });
       if (!res.ok && res.status !== 403) throw new Error('Backend tidak merespons');
       
       const data = await res.json();
@@ -770,7 +785,7 @@
         // UNLOCK UI
         form.classList.remove('is-locked');
         modeSwitch.classList.remove('is-locked');
-        [modeNamaBtn, modeSekolahBtn, modeWilayahBtn, searchInput, statusFilter, submitBtn].forEach(el => el.disabled = false);
+        [modeNamaBtn, modeSekolahBtn, modeIdBtn, searchInput, statusFilter, submitBtn].forEach(el => el.disabled = false);
         lockedBanner.style.display = 'none';
         
         statusTag.textContent = data.is_test_mode ? 'Mode Tes Aktif' : 'Telah Dibuka';
@@ -801,7 +816,7 @@
       // LOCK UI (Fallback / Sistem Dimatikan)
       form.classList.add('is-locked');
       modeSwitch.classList.add('is-locked');
-      [modeNamaBtn, modeSekolahBtn, modeWilayahBtn, searchInput, statusFilter, submitBtn].forEach(el => el.disabled = true);
+      [modeNamaBtn, modeSekolahBtn, modeIdBtn, searchInput, statusFilter, submitBtn].forEach(el => el.disabled = true);
       lockedBanner.style.display = 'flex';
       
       statusTag.textContent = 'Terkunci';
@@ -814,27 +829,20 @@
     }
   }
 
-  // Event listener hash hanya jika sengaja mengakses hash mode tes
-  window.addEventListener('hashchange', () => {
-    if (window.location.hash === '#tes-pencarian-hasil') {
-      checkServerStatus();
-    }
-  });
-
   // ===== MODE SWITCHER =====
   function setMode(mode){
     currentMode = mode;
     modeSwitch.setAttribute('data-mode', mode);
     modeNamaBtn.classList.toggle('is-active', mode === 'nama');
     modeSekolahBtn.classList.toggle('is-active', mode === 'sekolah');
-    modeWilayahBtn.classList.toggle('is-active', mode === 'wilayah');
+    modeIdBtn.classList.toggle('is-active', mode === 'id');
     
     searchLabel.textContent = MODE_COPY[mode].label;
     searchInput.placeholder = MODE_COPY[mode].placeholder;
     searchHint.textContent = MODE_COPY[mode].hint;
     
-    // Toggle dropdown filter kelolosan
-    if(mode === 'nama') {
+    // Filter applies only to school searches; an ID uniquely identifies one record.
+    if(mode !== 'sekolah') {
       searchFieldContainer.style.gridColumn = '1 / -1';
       statusFilterContainer.style.display = 'none';
     } else {
@@ -848,64 +856,53 @@
   }
   modeNamaBtn.addEventListener('click', ()=> setMode('nama'));
   modeSekolahBtn.addEventListener('click', ()=> setMode('sekolah'));
-  modeWilayahBtn.addEventListener('click', ()=> setMode('wilayah'));
+  modeIdBtn.addEventListener('click', ()=> setMode('id'));
 
   // ===== RENDER UI =====
-  function iconCheck(){ return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
-  function iconCross(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
-
   function renderNotFound(title, message) {
     return `<div style="background:var(--white); border-radius:var(--radius-lg); border:1px solid var(--blue-100); box-shadow:var(--shadow-card); padding:34px 32px; text-align:center; margin-bottom: 24px;">
-      <h3 style="margin:0 0 8px; font-size:17px; color:var(--blue-950);">${title}</h3>
-      <p style="margin:0; font-size:14px; color:var(--ink-soft);">${message}</p>
+      <h3 style="margin:0 0 8px; font-size:17px; color:var(--blue-950);">${escapeHtml(title)}</h3>
+      <p style="margin:0; font-size:14px; color:var(--ink-soft);">${escapeHtml(message)}</p>
     </div>`;
   }
 
-  function renderResultCard(found){
-    const lolos = String(found.status || '').toUpperCase() === 'LOLOS';
-    
-    // Bersihkan karakter tak kasat mata (zero-width / word joiner) untuk inisial yang tepat
-    const cleanNama = String(found.nama || '')
-      .replace(/[\u200B-\u200D\uFEFF\u2060]/g, '')
-      .trim();
-    const words = cleanNama.split(/\s+/).filter(Boolean);
-    const initials = words.slice(0, 2).map(w => {
-      const cleanWord = w.replace(/^[^\p{L}\p{N}]+/u, '');
-      return cleanWord ? cleanWord[0] : (w[0] || '');
-    }).join('').toUpperCase() || 'P';
+  const RESULT_CONFIG = {
+    gold: { headline: 'Selamat, kamu mendapatkan', highlight: 'MEDALI EMAS', sub: 'di ajang IKSC 2026!', quote: 'Kerja kerasmu terbayar. Terus bersinar, calon ilmuwan hebat!', color: '#B45309', background: 'linear-gradient(135deg, #FEF3C7, #FDE68A 50%, #F59E0B)', icon: '🥇', winner: true },
+    silver: { headline: 'Selamat, kamu mendapatkan', highlight: 'MEDALI PERAK', sub: 'di ajang IKSC 2026!', quote: 'Luar biasa! Prestasi ini bukti ketekunanmu. Teruslah melangkah menuju puncak!', color: '#475569', background: 'linear-gradient(135deg, #F1F5F9, #E2E8F0 50%, #94A3B8)', icon: '🥈', winner: true },
+    bronze: { headline: 'Selamat, kamu mendapatkan', highlight: 'MEDALI PERUNGGU', sub: 'di ajang IKSC 2026!', quote: 'Awal yang gemilang! Terus asah kemampuanmu, langit adalah batasnya.', color: '#9A3412', background: 'linear-gradient(135deg, #FFEDD5, #FED7AA 50%, #C2410C)', icon: '🥉', winner: true },
+    participant: { headline: 'Terima kasih telah', highlight: 'BERPARTISIPASI', sub: 'di ajang IKSC 2026', quote: 'Setiap juara pernah menjadi peserta. Terus semangat belajar, kesempatanmu masih luas!', color: '#475569', background: 'linear-gradient(135deg, #F8FAFC, #E2E8F0 50%, #64748B)', icon: '🎗️', winner: false }
+  };
 
-    // Format metadata sekolah, wilayah, dan kelas tanpa tanda pemisah gantung
-    const metaParts = [];
-    if (found.sekolah) metaParts.push(escapeHtml(found.sekolah));
-    if (found.wilayah) metaParts.push(escapeHtml(found.wilayah));
-    if (found.kelas) metaParts.push(`Kelas ${escapeHtml(found.kelas)}`);
-    const metaText = metaParts.join(' · ');
+  function renderResultCard(found) {
+    const config = RESULT_CONFIG[found.tier] || RESULT_CONFIG.participant;
+    const name = String(found.nama || '').replace(/[\u200B-\u200D\uFEFF\u2060]/g, '').trim();
+    const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map(word => word[0]).join('').toUpperCase() || 'P';
+    const meta = [found.sekolah, found.kelas && `Kelas ${found.kelas}`].filter(Boolean).map(escapeHtml).join(' · ');
+    const shareText = config.winner
+      ? `Alhamdulillah, saya mendapatkan ${config.highlight} di IKSC 2026! 🏆`
+      : 'Terima kasih, saya telah berpartisipasi di IKSC 2026! 🎗️';
+    const shareUrl = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n\nCek hasilnya di: ${window.location.href}`)}`;
 
-    // Badge ID atau Nomor Peserta (jika tersedia)
-    let idBadge = '';
-    if (found.id_peserta) {
-      idBadge = `<span style="display:inline-block; padding: 2px 8px; background: rgba(255,255,255,0.15); border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);">ID: ${escapeHtml(found.id_peserta)}</span>`;
-    } else if (found.no) {
-      idBadge = `<span style="display:inline-block; padding: 2px 8px; background: rgba(255,255,255,0.15); border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);">No: ${escapeHtml(found.no)}</span>`;
-    }
-    
-    return `
-    <div style="background:var(--white); border-radius:var(--radius-lg); border:1px solid var(--blue-100); box-shadow:var(--shadow-card); overflow:hidden; margin-bottom: 24px;">
-      <div class="result-top">
-        <div class="who">
-          <div class="avatar-ring">${escapeHtml(initials)}</div>
-          <div>
-            <p class="name">${escapeHtml(cleanNama)}</p>
-            ${metaText ? `<p class="sub" style="margin-bottom: 3px;">${metaText}</p>` : ''}
-            ${idBadge ? `<p class="sub" style="font-size: 11.5px; opacity: 0.9; margin: 4px 0 0;">${idBadge}</p>` : ''}
-          </div>
-        </div>
-        <div class="seal ${lolos ? 'lolos' : 'tidak'}">
-          <span class="seal-icon">${lolos ? iconCheck() : iconCross()}</span>
-          <span class="seal-label">${lolos ? 'DINYATAKAN LOLOS' : 'BELUM LOLOS'}</span>
-        </div>
+    return `<article class="result-celebration" style="background:${config.background};">
+      <div class="medal-mark" aria-hidden="true">${config.icon}</div>
+      <p class="celebration-headline">${config.headline}</p>
+      <h2 class="celebration-highlight" style="color:${config.color};">${config.highlight}</h2>
+      <p class="celebration-sub">${config.sub}</p>
+      <div class="result-identity">
+        <div class="result-avatar" style="background:${config.color};">${escapeHtml(initials)}</div>
+        <div><p class="result-name">${escapeHtml(name)}</p>${meta ? `<p class="result-meta">${meta}</p>` : ''}${found.id_peserta ? `<p class="result-id">ID: ${escapeHtml(found.id_peserta)}</p>` : ''}</div>
       </div>
-    </div>`;
+      <p class="result-quote">💬 ${config.quote}</p>
+      <div class="result-actions"><a class="btn-share" href="${shareUrl}" target="_blank" rel="noopener noreferrer">Bagikan ke WhatsApp</a><button type="button" class="btn-search-again" onclick="resetSearch()">Cari Peserta Lain</button></div>
+    </article>`;
+  }
+
+  function resetSearch() {
+    searchInput.value = '';
+    resultCard.innerHTML = '';
+    resultCard.classList.remove('show');
+    document.getElementById('cek-hasil').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    searchInput.focus();
   }
 
   // ===== PENCARIAN VIA API =====
@@ -913,11 +910,11 @@
     e.preventDefault();
     const query = searchInput.value.trim();
     
-    // Validasi karakter bersih minimal 2 karakter alfanumerik
+    // Keep this in sync with the API to avoid sending unusably broad searches.
     const cleanCheck = query.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()'"\u200B-\u200D\uFEFF\u2060]/g, '').trim();
-    if(cleanCheck.length < 2) {
+    if(cleanCheck.length < 3) {
       resultCard.className = 'result-card-container show';
-      resultCard.innerHTML = renderNotFound('Pencarian Terlalu Pendek', 'Silakan masukkan minimal 2 huruf atau angka yang valid untuk mencari hasil.');
+      resultCard.innerHTML = renderNotFound('Pencarian Terlalu Pendek', 'Silakan masukkan minimal 3 huruf atau angka yang valid untuk mencari hasil.');
       resultCard.scrollIntoView({behavior:'smooth', block:'start'});
       searchInput.focus();
       return;
@@ -931,14 +928,11 @@
       
       // Susun URL API dengan menambahkan parameter filter
       let url = `${API_URL}?mode=${encodeURIComponent(currentMode)}&q=${encodeURIComponent(query)}`;
-      if (currentMode !== 'nama') {
+      if (currentMode === 'sekolah') {
         url += `&status=${encodeURIComponent(statusFilter.value)}`;
       }
-      if (activeTestKey) {
-        url += `&test_key=${encodeURIComponent(activeTestKey)}`;
-      }
-      
-      const res = await fetch(url);
+      const headers = activeTestKey ? { 'X-Test-Key': activeTestKey } : {};
+      const res = await fetch(url, { headers });
       let data;
       try {
         data = await res.json();
@@ -949,36 +943,21 @@
       resultCard.className = 'result-card-container show';
 
       if (!data.success) {
-        resultCard.innerHTML = renderNotFound('Terjadi Kendala', escapeHtml(data.message || 'Pencarian tidak dapat diproses.'));
+        resultCard.innerHTML = renderNotFound('Terjadi Kendala', data.message || 'Pencarian tidak dapat diproses.');
       } else {
-        let displayData = data.data || [];
-        
-        // Frontend filtering sebagai perisai ganda
-        if (currentMode !== 'nama' && statusFilter.value !== 'semua') {
-          const filterVal = statusFilter.value;
-          displayData = displayData.filter(item => {
-             const statusText = String(item.status || '').toUpperCase();
-             if (filterVal === 'lolos') return statusText === 'LOLOS';
-             if (filterVal === 'tidak_lolos') return statusText !== 'LOLOS';
-             return true;
-          });
-        }
+        const displayData = data.data || [];
 
         if (displayData.length === 0) {
           resultCard.innerHTML = renderNotFound('Data Tidak Ditemukan', 'Tidak ada data peserta yang cocok atau periksa kembali ejaan pencarian Anda.');
         } else {
-          if (currentMode === 'sekolah' || currentMode === 'wilayah') {
-            let filterLabel = "";
-            if(statusFilter.value === 'lolos') filterLabel = " lolos";
-            if(statusFilter.value === 'tidak_lolos') filterLabel = " belum lolos";
-
+          if (currentMode === 'sekolah') {
             const totalFound = data.total_found || displayData.length;
             let countSummary = `${displayData.length} peserta`;
             if (totalFound > displayData.length) {
               countSummary = `Menampilkan ${displayData.length} dari ${totalFound} peserta`;
             }
 
-            const header = `<div style="padding:18px 0 6px;"><h3 style="margin:0; font-size:17px; color:var(--blue-950);">${countSummary}${filterLabel} dari "${escapeHtml(query)}"</h3></div>`;
+            const header = `<div style="padding:18px 0 6px;"><h3 style="margin:0; font-size:17px; color:var(--blue-950);">${countSummary} dari "${escapeHtml(query)}"</h3></div>`;
             resultCard.innerHTML = header + `<div style="padding:10px 0;">${displayData.map(renderResultCard).join('')}</div>`;
           } else {
             resultCard.innerHTML = displayData.map(renderResultCard).join('');

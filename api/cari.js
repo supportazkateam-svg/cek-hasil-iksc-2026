@@ -1,245 +1,214 @@
-// api/cari.js
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
-// Kunci rahasia untuk panitia melakukan pengujian (mendukung Environment Variable jika ada)
-const SECRET_TEST_KEY = process.env.TEST_KEY || 'panitiaksnr2026';
+const DEFAULT_LIMIT = 20;
+const MAX_LIMIT = 50;
+const RL_WINDOW_SECONDS = 60;
+const RL_MAX_REQUESTS = 30;
+const VALID_MODES = new Set(['nama', 'sekolah', 'id']);
+const VALID_STATUSES = new Set(['semua', 'medali', 'gold', 'silver', 'bronze', 'participant']);
 
-// Batas data per halaman
-const DEFAULT_LIMIT = 50;
-const MAX_LIMIT = 100;
+let cachedData = null;
+let redis = null;
+const localRateLimits = new Map();
 
-// Cache data peserta di memori serverless untuk kecepatan akses
-let DATA_PESERTA = null;
+// Redis is optional locally, but required in production if rate limiting is desired.
+try {
+  const { Redis } = require('@upstash/redis');
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    redis = Redis.fromEnv();
+  }
+} catch (_) {
+  // Keep local development dependency-free; requests are still validated and capped.
+}
 
-// ==========================================
-// 1. FUNGSI CEK SAKLAR ON / OFF PENGUMUMAN
-// ==========================================
 function getSwitchStatus() {
-  // Opsi A: Cek dari Environment Variable (jika disetel di hosting/Vercel)
-  if (process.env.STATUS_RILIS !== undefined) {
-    return process.env.STATUS_RILIS === 'true' || process.env.STATUS_RILIS === '1';
+  if (process.env.STATUS_RILIS !== undefined) return /^(true|1)$/i.test(process.env.STATUS_RILIS);
+
+  // config.json is a local-development fallback only. Production should set STATUS_RILIS.
+  try {
+    return Boolean(JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'config.json'), 'utf8')).is_active);
+  } catch (_) {
+    return false;
   }
-
-  // Opsi B: Cek dari file config.json di root atau folder lokal
-  const possibleConfigs = [
-    path.join(__dirname, '..', 'config.json'), // Root direktori (1 level di atas api/)
-    path.join(process.cwd(), 'config.json'),   // Root runtime direktori
-    path.join(__dirname, 'config.json')        // Direktori lokal api/
-  ];
-
-  for (const configPath of possibleConfigs) {
-    if (fs.existsSync(configPath)) {
-      try {
-        const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-        return Boolean(config.is_active);
-      } catch (e) {
-        console.error('[Config Error]: Gagal membaca config.json:', e.message);
-      }
-    }
-  }
-
-  // Default jika belum ada pengaturan: sistem tetap terkunci (OFF)
-  return false;
 }
 
-// ==========================================
-// 2. FUNGSI MEMUAT DATA PESERTA
-// ==========================================
+function secureEqual(input, secret) {
+  if (!secret || !input) return false;
+  const inputBuffer = Buffer.from(String(input));
+  const secretBuffer = Buffer.from(String(secret));
+  return inputBuffer.length === secretBuffer.length && crypto.timingSafeEqual(inputBuffer, secretBuffer);
+}
+
+function isTesting(req) {
+  // Prefer a header so the secret does not become part of browser history or referrer logs.
+  const suppliedKey = req.headers['x-test-key'] || '';
+  return secureEqual(suppliedKey, process.env.TEST_KEY);
+}
+
+function readJson(filePath) {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const records = Array.isArray(parsed) ? parsed : parsed.data;
+    return Array.isArray(records) ? records : [];
+  } catch (error) {
+    console.error(`[Data Error] ${path.basename(filePath)}: ${error.message}`);
+    return [];
+  }
+}
+
 function loadPesertaData() {
-  // Hanya gunakan cache jika valid dan berisi data (mencegah bug cache kosong permanen)
-  if (Array.isArray(DATA_PESERTA) && DATA_PESERTA.length > 0) {
-    return DATA_PESERTA;
-  }
+  if (cachedData) return cachedData;
 
-  const possiblePaths = [
-    path.join(__dirname, 'peserta.json'),           // 1. Tepat berdampingan di folder api/
-    path.join(process.cwd(), 'api', 'peserta.json'),// 2. Dari root ke folder api/peserta.json
-    path.join(process.cwd(), 'peserta.json'),       // 3. Cadangan di root
-    path.join(process.cwd(), 'data', 'peserta.json')// 4. Cadangan di folder data/
-  ];
+  const root = path.join(__dirname, '..');
+  const ikscRecords = [
+    path.join(root, 'data', 'peserta-kelas5.json'),
+    path.join(root, 'data', 'peserta-kelas6.json')
+  ].flatMap(readJson);
 
-  for (const filePath of possiblePaths) {
-    if (fs.existsSync(filePath)) {
-      try {
-        const rawContent = fs.readFileSync(filePath, 'utf-8');
-        const parsed = JSON.parse(rawContent);
-        const records = Array.isArray(parsed) ? parsed : (parsed.data || []);
-        
-        if (records.length > 0) {
-          DATA_PESERTA = records;
-          console.log(`[Success] Berhasil memuat ${DATA_PESERTA.length} peserta dari: ${filePath}`);
-          return DATA_PESERTA;
-        }
-      } catch (err) {
-        console.error(`[Error JSON] Gagal membaca ${filePath}:`, err.message);
-      }
-    }
-  }
-
-  return [];
+  // A legacy KSNR file exists in this repository, but it must never be presented
+  // as IKSC results. It can be enabled explicitly for local migration checks only.
+  cachedData = ikscRecords.length > 0
+    ? ikscRecords
+    : (process.env.ALLOW_LEGACY_DATA === 'true'
+      ? readJson(path.join(root, 'api', 'peserta.json'))
+      : []);
+  return cachedData;
 }
 
-// ==========================================
-// 3. FUNGSI NORMALISASI TEKS (BERSIH & KEBAL ANOMALI)
-// ==========================================
-function normalizeText(text) {
-  return String(text ?? '')
-    .toLowerCase()
+function normalizeText(value) {
+  return String(value ?? '')
+    .toLocaleLowerCase('id-ID')
     .normalize('NFKD')
-    // Hapus karakter invisible unicode (zero-width space, word-joiner \u2060, BOM)
+    .replace(/[\u0300-\u036f]/g, '')
     .replace(/[\u200B-\u200D\uFEFF\u2060]/g, '')
-    // Hapus segala jenis petik tunggal/ganda (lurus, lengkung, backtick)
     .replace(/['’‘`"“”]/g, '')
-    // Hapus tanda baca umum
-    .replace(/[.,\/#!$%\^&\*;:{}=\-_~()]/g, '')
-    // Satukan spasi berlebih
+    .replace(/[.,/#!$%^&*;:{}=\-_~()]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
-// ==========================================
-// 4. MAIN HANDLER (SERVERLESS FUNCTION)
-// ==========================================
-module.exports = (req, res) => {
-  // Set Response Headers & CORS (Mendukung pemanggilan lintas origin)
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+function getTier(status) {
+  const normalized = String(status || '').toUpperCase();
+  if (normalized.includes('GOLD')) return 'gold';
+  if (normalized.includes('SILVER')) return 'silver';
+  if (normalized.includes('BRONZE')) return 'bronze';
+  return 'participant';
+}
 
-  // Tangani pre-flight request browser
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+function getClientIp(req) {
+  const forwarded = req.headers['x-forwarded-for'];
+  return (Array.isArray(forwarded) ? forwarded[0] : String(forwarded || '').split(',')[0]).trim() || 'unknown';
+}
+
+async function isWithinRateLimit(ip) {
+  if (!redis) {
+    // Local fallback protects development and a warm single instance. Upstash remains
+    // necessary in Vercel because individual serverless instances do not share memory.
+    const now = Date.now();
+    const state = localRateLimits.get(ip);
+    if (!state || now - state.startedAt >= RL_WINDOW_SECONDS * 1000) {
+      localRateLimits.set(ip, { startedAt: now, count: 1 });
+      return true;
+    }
+    state.count += 1;
+    return state.count <= RL_MAX_REQUESTS;
   }
+  try {
+    const key = `iksc:search:${ip}`;
+    const count = await redis.incr(key);
+    if (count === 1) await redis.expire(key, RL_WINDOW_SECONDS);
+    return count <= RL_MAX_REQUESTS;
+  } catch (error) {
+    console.error(`[Rate Limit Error] ${error.message}`);
+    return false;
+  }
+}
 
-  // Hanya izinkan HTTP GET
+function matchesStatus(record, status) {
+  const tier = getTier(record.status);
+  if (status === 'semua') return true;
+  if (status === 'medali') return tier !== 'participant';
+  return tier === status;
+}
+
+function publicRecord(record) {
+  const tier = getTier(record.status);
+  return {
+    no: record.no,
+    nama: record.nama,
+    id_peserta: record.id_peserta,
+    kelas: record.kelas,
+    sekolah: record.sekolah,
+    status: record.status,
+    tier,
+    is_winner: tier !== 'participant'
+  };
+}
+
+module.exports = async (req, res) => {
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-store, max-age=0');
+
+  if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET');
-    return res.status(405).json({
-      success: false,
-      message: 'Method Not Allowed. Hanya mendukung GET.'
-    });
+    res.setHeader('Allow', 'GET, OPTIONS');
+    return res.status(405).json({ success: false, message: 'Hanya metode GET yang didukung.' });
   }
 
   try {
-    const { 
-      mode = 'nama', 
-      q = '', 
-      status = 'semua', 
-      test_key = '', 
-      check_status = 'false',
-      page = '1',
-      limit = String(DEFAULT_LIMIT)
-    } = req.query;
+    const query = req.query || {};
+    const mode = String(query.mode || 'nama').toLowerCase();
+    const status = String(query.status || 'semua').toLowerCase();
+    const testing = isTesting(req);
+    const active = getSwitchStatus();
 
-    const isSystemOn = getSwitchStatus();
-    const isTesting = test_key === SECRET_TEST_KEY;
-
-    // --- FITUR 1: CEK STATUS SAKLAR OLEH FRONTEND ---
-    if (check_status === 'true') {
-      return res.status(200).json({
-        success: true,
-        is_active: isSystemOn,
-        is_test_mode: isTesting
-      });
+    if (query.check_status === 'true') {
+      return res.status(200).json({ success: true, is_active: active, is_test_mode: testing });
+    }
+    if (!active && !testing) {
+      return res.status(403).json({ success: false, status: 'locked', message: 'Pengumuman belum dibuka.' });
+    }
+    if (!testing && !(await isWithinRateLimit(getClientIp(req)))) {
+      return res.status(429).json({ success: false, status: 'rate_limited', message: 'Terlalu banyak pencarian. Silakan coba lagi satu menit lagi.' });
+    }
+    if (!VALID_MODES.has(mode) || !VALID_STATUSES.has(status)) {
+      return res.status(400).json({ success: false, message: 'Parameter pencarian tidak valid.' });
     }
 
-    // --- FITUR 2: PROTEKSI PENGUMUMAN TERKUNCI ---
-    if (!isSystemOn && !isTesting) {
-      return res.status(403).json({
-        success: false,
-        status: 'locked',
-        message: 'Pengumuman hasil belum dibuka oleh panitia. Silakan pantau halaman ini secara berkala.'
-      });
+    const rawQuery = String(query.q || '').trim();
+    const normalizedQuery = normalizeText(rawQuery);
+    if (normalizedQuery.length < 3) {
+      return res.status(400).json({ success: false, status: 'invalid_query', message: 'Masukkan minimal 3 karakter yang valid.' });
     }
 
-    // --- FITUR 3: VALIDASI & NORMALISASI QUERY ---
-    const rawQuery = String(q).trim();
-    if (/[<>{}[\]\\]/.test(rawQuery)) {
-      return res.status(400).json({
-        success: false,
-        status: 'invalid_characters',
-        message: 'Input mengandung karakter yang tidak diperbolehkan.'
-      });
+    const records = loadPesertaData();
+    if (!records.length) {
+      return res.status(503).json({ success: false, status: 'data_unavailable', message: 'Data hasil belum tersedia di server.' });
     }
 
-    const queryNorm = normalizeText(rawQuery);
-
-    // Validasi panjang dilakukan setelah normalisasi untuk mencegah celah dump data
-    if (queryNorm.length < 2) {
-      return res.status(400).json({
-        success: false,
-        status: 'invalid_query',
-        message: 'Masukkan minimal 2 huruf atau angka yang valid untuk pencarian.'
-      });
-    }
-
-    // Muat data peserta
-    const daftarPeserta = loadPesertaData();
-    if (!daftarPeserta || daftarPeserta.length === 0) {
-      return res.status(500).json({
-        success: false,
-        status: 'data_unavailable',
-        message: 'Database peserta belum tersedia di server. Hubungi administrator.'
-      });
-    }
-
-    // --- FITUR 4: PROSES PENCARIAN & FILTERING ---
-    let hasil = daftarPeserta.filter(p => {
-      // 1. Filter Status Kelolosan
-      if (status !== 'semua') {
-        const isLolos = String(p.status || '').toUpperCase() === 'LOLOS';
-        if (status === 'lolos' && !isLolos) return false;
-        if (status === 'tidak_lolos' && isLolos) return false;
-      }
-
-      // 2. Filter Teks Berdasarkan Mode
-      if (mode === 'sekolah') {
-        return normalizeText(p.sekolah).includes(queryNorm);
-      } else if (mode === 'wilayah') {
-        return normalizeText(p.wilayah).includes(queryNorm);
-      } else { 
-        // Default mode = 'nama'
-        return normalizeText(p.nama).includes(queryNorm);
-      }
+    const matches = records.filter((record) => {
+      const match = mode === 'id'
+        ? normalizeText(record.id_peserta) === normalizedQuery
+        : normalizeText(record[mode]).includes(normalizedQuery);
+      return match && matchesStatus(record, status);
+    }).sort((a, b) => {
+      const rank = { gold: 4, silver: 3, bronze: 2, participant: 1 };
+      const difference = rank[getTier(b.status)] - rank[getTier(a.status)];
+      return difference || String(a.nama || '').localeCompare(String(b.nama || ''), 'id-ID');
     });
 
-    // --- FITUR 5: PENGURUTAN DATA ---
-    hasil.sort((a, b) => {
-      const aLolos = String(a.status || '').toUpperCase() === 'LOLOS';
-      const bLolos = String(b.status || '').toUpperCase() === 'LOLOS';
-      
-      // Prioritaskan status LOLOS di urutan atas
-      if (aLolos && !bLolos) return -1;
-      if (!aLolos && bLolos) return 1;
-      
-      // Urutkan alfabetis nama
-      return String(a.nama || '').localeCompare(String(b.nama || ''), 'id');
-    });
-
-    // --- FITUR 6: PAGINASI / LIMIT DATA ---
-    const pageNum = Math.max(1, parseInt(page, 10) || 1);
-    const limitNum = Math.min(MAX_LIMIT, Math.max(1, parseInt(limit, 10) || DEFAULT_LIMIT));
-    const startIndex = (pageNum - 1) * limitNum;
-    const paginatedData = hasil.slice(startIndex, startIndex + limitNum);
-
+    const requestedLimit = Number.parseInt(query.limit, 10);
+    const limit = Math.min(MAX_LIMIT, Math.max(1, Number.isFinite(requestedLimit) ? requestedLimit : DEFAULT_LIMIT));
     return res.status(200).json({
       success: true,
-      status: 'success',
-      mode: mode,
-      query: rawQuery,
-      total_found: hasil.length,
-      page: pageNum,
-      limit: limitNum,
-      data: paginatedData
+      mode,
+      total_found: matches.length,
+      data: matches.slice(0, limit).map(publicRecord)
     });
-
-  } catch (err) {
-    console.error('[API Error]:', err);
-    return res.status(500).json({
-      success: false,
-      message: 'Terjadi kendala teknis pada server.'
-    });
+  } catch (error) {
+    console.error(`[API Error] ${error.message}`);
+    return res.status(500).json({ success: false, message: 'Terjadi kendala teknis pada server.' });
   }
 };

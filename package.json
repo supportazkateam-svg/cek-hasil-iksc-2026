@@ -1,0 +1,15 @@
+{
+  "name": "iksc-2026-results",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "parse:pdf": "node scripts/parse-pdf.js"
+  },
+  "engines": {
+    "node": ">=20.16.0"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.34.0",
+    "pdf-parse": "^2.4.5"
+  }
+}
