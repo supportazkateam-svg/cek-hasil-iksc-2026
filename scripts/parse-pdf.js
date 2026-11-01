@@ -37,13 +37,15 @@ function compact(value) {
 function parseRows(text) {
   const HEADER_LINE = /^(no|nama siswa|id peserta|kelas|sekolah|hasil)$/i;
   const SKIP_HEADER = /^(pengumuman hasil|international kangaroo|iksc\s*20\d{2}|kelas\s+\d+|no\.?\s+nama)/i;
+  const PAGE_FOOTER = /^--\s*\d+\s+of\s+\d+\s*--$/i;
+  const PAGE_NUMBER_WITH_STATUS = /^\d+\s+(Gold\s+Medal|Silver\s+Medal|Bronze\s+Medal|Participant)$/i;
   const RECORD_START = /^\d+(\s|$)/;
   const ROW_REGEX = /^(\d+)\s+(.+?)\s+([A-Z][A-Z0-9]*-[A-Z0-9]{4,})\s+(\d{1,2})\s+(.+?)\s+(Gold\s+Medal|Silver\s+Medal|Bronze\s+Medal|Participant)$/i;
+  const HAS_ID = /[A-Z][A-Z0-9]*-[A-Z0-9]{4,}/i;
 
   const rows = [];
   let current = '';
 
-  // Iterasi manual per baris, tanpa text.split() raksasa
   let start = 0;
   const len = text.length;
   while (start < len) {
@@ -52,33 +54,62 @@ function parseRows(text) {
     const rawLine = text.slice(start, end);
     start = end + 1;
 
-    // Bersihkan zero-width chars per baris (bukan seluruh teks)
     const line = rawLine
       .replace(/[\u200B-\u200D\uFEFF\u2060]/g, '')
       .replace(/\s+/g, ' ')
       .trim();
     if (!line) continue;
 
-    if (HEADER_LINE.test(line)) continue;
-    if (SKIP_HEADER.test(line)) continue;
+    // Filter baris yang HANYA berisi angka (nomor halaman PDF independen)
+    if (/^\d+$/.test(line)) continue;
 
-    // Awal record baru: nomor bisa diikuti spasi ATAU akhir baris
-    if (RECORD_START.test(line) && current) {
-      const m = current.match(ROW_REGEX);
-      if (m) {
-        rows.push({
-          no: Number.parseInt(m[1], 10),
-          nama: m[2].replace(/\s+/g, ' ').trim(),
-          id_peserta: m[3].toUpperCase(),
-          kelas: m[4],
-          sekolah: m[5].replace(/\s+/g, ' ').trim(),
-          status: m[6].replace(/\b\w/g, (l) => l.toUpperCase())
-        });
-      }
-      current = '';
+    // Abaikan footer halaman bawaan PDF parser
+    if (PAGE_FOOTER.test(line)) continue;
+
+    // Bersihkan page number ganda di awal baris (misal "164 18 Budi Santoso")
+    let processedLine = line;
+    if (/^\d+\s+\d+\s+[A-Za-z]/.test(processedLine)) {
+      processedLine = processedLine.replace(/^\d+\s+/, '');
     }
 
-    current = current ? `${current} ${line}` : line;
+    const statusAfterPageNumber = processedLine.match(PAGE_NUMBER_WITH_STATUS);
+    if (statusAfterPageNumber) {
+      if (current) current = `${current} ${statusAfterPageNumber[1]}`;
+      continue;
+    }
+
+    if (HEADER_LINE.test(processedLine)) continue;
+    if (SKIP_HEADER.test(processedLine)) continue;
+
+    // Validasi ketat awal record baru untuk mencegah terputusnya data
+    if (RECORD_START.test(processedLine) && current) {
+      let isNewRecord = false;
+
+      if (ROW_REGEX.test(current)) {
+        isNewRecord = true;
+      } else if (HAS_ID.test(processedLine)) {
+        isNewRecord = true;
+      } else {
+        isNewRecord = false;
+      }
+
+      if (isNewRecord) {
+        const m = current.match(ROW_REGEX);
+        if (m) {
+          rows.push({
+            no: Number.parseInt(m[1], 10),
+            nama: m[2].replace(/\s+/g, ' ').trim(),
+            id_peserta: m[3].toUpperCase(),
+            kelas: m[4],
+            sekolah: m[5].replace(/\s+/g, ' ').trim(),
+            status: m[6].replace(/\b\w/g, (l) => l.toUpperCase())
+          });
+        }
+        current = '';
+      }
+    }
+
+    current = current ? `${current} ${processedLine}` : processedLine;
   }
 
   // Flush record terakhir
